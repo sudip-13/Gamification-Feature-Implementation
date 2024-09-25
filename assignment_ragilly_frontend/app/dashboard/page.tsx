@@ -24,7 +24,7 @@ const userDetails = gql`{
 const Dashboard: React.FC = () => {
     const [addBankAccount, setAddBankAccount] = useState<boolean>(false);
     const [withdrawlPopup, setWithdrawlPopup] = useState<boolean>(false);
-    const { loading, error, data, refetch } = useQuery(userDetails);
+    const {  error, data, refetch } = useQuery(userDetails);
     const token = useSelector((state: RootState) => state.authToken.token);
 
 
