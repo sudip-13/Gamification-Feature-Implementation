@@ -13,10 +13,55 @@ datasource db {
 }
 
 model User {
-  id                            Int    @id @default(autoincrement())
-  userId                        String @unique
-  email                         String @unique
-  canRedemPoints                Int    @default(0)
-  redeemedPointsConvertedToCash Int    @default(0)
-  noOfTransactions              Int    @default(0)
+  id                            Int                 @id @default(autoincrement())
+  userId                        String              @unique
+  email                         String              @unique
+  canRedemPoints                Int                 @default(0)
+  totalPointsRedeemed           Int                 @default(0)
+  redeemedPointsConvertedToCash Int                 @default(0)
+  noOfTransactions              Int                 @default(0)
+  withdrawalDetails             withdrawalDetails[]
+
+  withdrawalRequests withdrawalRequests[]
+
+  @@index([userId])
+}
+
+model history {
+  id                Int    @id @default(autoincrement())
+  userId            String
+  transactionsId    String
+  transactionAmount Int
+  transactionType   String @default("debit")
+
+  timestamp DateTime @default(now())
+
+  @@index([userId])
+}
+
+model withdrawalDetails {
+  id            Int    @id @default(autoincrement())
+  userId        String
+  bankName      String
+  accountNumber Int
+  ifscCode      Int
+
+  timestamp DateTime @default(now())
+
+  User User @relation(fields: [userId], references: [userId])
+
+  @@index([userId])
+}
+
+model withdrawalRequests {
+  id            Int    @id @default(autoincrement())
+  userId        String
+  amount        Int
+  accountNumber Int
+  transactionsId String
+  status        String @default("pending")
+
+  timestamp DateTime @default(now())
+
+  User User @relation(fields: [userId], references: [userId])
 }
