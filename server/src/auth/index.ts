@@ -75,7 +75,7 @@ export async function submitWithdrawalDetails(req: Request, res: Response) {
     }
 
     try {
-        const isUserExists = await prisma.user.findUnique({ where: { userId:String(userId)} })
+        const isUserExists = await prisma.user.findUnique({ where: { userId: String(userId) } })
         if (!isUserExists) {
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -100,45 +100,49 @@ export async function submitWithdrawalDetails(req: Request, res: Response) {
 
 
 
+
+
 export async function Withdrawal(req: Request, res: Response) {
     const userId = req.userId;
     const { amount, accountNumber } = req.body;
     const transactionId = uuidv4();
+
     try {
-        const isUserExists = await prisma.user.findUnique({ where: { userId } })
+        const isUserExists = await prisma.user.findUnique({ where: { userId } });
         if (!isUserExists) {
             return res.status(404).json({ msg: 'User not found' });
         }
         if (isUserExists.redeemedPointsConvertedToCash < amount) {
-            return res.status(400).json({ msg: 'Not enough points to withdraw' });
+            return res.status(400).json({ msg: 'Not enough amount to withdraw' });
         }
-        await prisma.user.update({
-            where: { userId },
-            data: { redeemedPointsConvertedToCash: isUserExists.redeemedPointsConvertedToCash - amount },
-        });
 
-        await prisma.withdrawalRequests
-            .create({
+        await prisma.$transaction(async (tx) => {
+            await tx.user.update({
+                where: { userId },
+                data: { redeemedPointsConvertedToCash: isUserExists.redeemedPointsConvertedToCash - amount },
+            });
+
+            await tx.withdrawalRequests.create({
                 data: {
                     userId: String(userId),
                     accountNumber: Number(accountNumber),
                     amount: Number(amount),
-                    transactionsId: String(transactionId)
-
+                    transactionsId: String(transactionId),
                 },
-            })
-        await prisma.history.create({
-            data: {
-                userId: String(userId),
-                transactionType: "pending",
-                transactionAmount: Number(amount),
-                transactionsId: String(transactionId)
-            },
-        })
+            });
+
+            await tx.history.create({
+                data: {
+                    userId: String(userId),
+                    transactionType: "pending",
+                    transactionAmount: Number(amount),
+                    transactionsId: String(transactionId),
+                },
+            });
+        });
 
         res.status(200).json({ msg: 'Withdrawal request submitted successfully' });
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         res.status(500).json({ msg: 'Internal server error' });
     }

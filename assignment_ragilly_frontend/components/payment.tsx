@@ -157,7 +157,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
         } catch (error) {
 
             if (axios.isAxiosError(error)) {
-                console.log(error)
+                
 
                 if (error.status === 401) {
                     alert('Unauthorized. Please log in first.');
