@@ -8,12 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
-const authmiddleware_1 = __importDefault(require("../../middleware/authmiddleware"));
+const authmiddleware_1 = require("../../middleware/authmiddleware");
 const index_1 = require("../../index");
 const applyMiddlewareToResolver = (middleware, resolver) => {
     return (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,10 +29,12 @@ const queries = {
     Index: () => {
         return [{ "msg": "Hello world!" }];
     },
-    getUserData: applyMiddlewareToResolver(authmiddleware_1.default, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+    getUserData: applyMiddlewareToResolver(authmiddleware_1.authMiddlewareGql, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
         const { req } = context;
         const userId = req.userId;
-        console.log('User ID:', userId);
+        if (!userId) {
+            throw new Error('Unauthorized: No valid user ID');
+        }
         try {
             const userDetails = yield index_1.prisma.user.findUnique({ where: { userId: userId } });
             if (!userDetails) {
@@ -48,14 +47,16 @@ const queries = {
                 }];
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
             throw new Error('Error fetching user data');
         }
     })),
-    getTransactionHistory: applyMiddlewareToResolver(authmiddleware_1.default, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+    getTransactionHistory: applyMiddlewareToResolver(authmiddleware_1.authMiddlewareGql, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
         const { req } = context;
         const userId = req.userId;
-        console.log('User ID:', userId);
+        if (!userId) {
+            throw new Error('Unauthorized: No valid user ID');
+        }
         try {
             const transactionHistory = yield index_1.prisma.history.findMany({ where: { userId: userId } });
             if (transactionHistory.length === 0) {
@@ -65,7 +66,7 @@ const queries = {
                 transactionId: transaction.transactionsId,
                 status: transaction.transactionType,
                 transactionAmount: transaction.transactionAmount,
-                timestamp: transaction.timestamp.toISOString(),
+                timeStamp: transaction.timestamp.toISOString(),
             }));
         }
         catch (error) {
@@ -73,10 +74,12 @@ const queries = {
             throw new Error('Error fetching transaction history');
         }
     })),
-    getWithdrawalHistory: applyMiddlewareToResolver(authmiddleware_1.default, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+    getWithdrawalHistory: applyMiddlewareToResolver(authmiddleware_1.authMiddlewareGql, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
         const { req } = context;
         const userId = req.userId;
-        console.log('User ID:', userId);
+        if (!userId) {
+            throw new Error('Unauthorized: No valid user ID');
+        }
         try {
             const withdrawalRequests = yield index_1.prisma.withdrawalRequests.findMany({ where: { userId: userId } });
             if (withdrawalRequests.length === 0) {
@@ -95,13 +98,15 @@ const queries = {
             throw new Error('Error fetching withdrawal requests');
         }
     })),
-    getWithdrawalDetails: applyMiddlewareToResolver(authmiddleware_1.default, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+    getWithdrawalDetails: applyMiddlewareToResolver(authmiddleware_1.authMiddlewareGql, (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
         const { req } = context;
         const userId = req.userId;
-        console.log('User ID:', userId);
+        if (!userId) {
+            throw new Error('Unauthorized: No valid user ID');
+        }
         try {
             const withdrawalDetails = yield index_1.prisma.withdrawalDetails.findMany({
-                where: { userId: userId }
+                where: { userId: userId },
             });
             if (withdrawalDetails.length === 0) {
                 throw new Error('Withdrawal details not found');
@@ -116,6 +121,6 @@ const queries = {
             console.error(error);
             throw new Error('Error fetching withdrawal details');
         }
-    }))
+    })),
 };
 exports.resolvers = { queries };

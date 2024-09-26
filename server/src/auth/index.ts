@@ -69,12 +69,13 @@ export async function redemPointsToCash(req: Request, res: Response) {
 export async function submitWithdrawalDetails(req: Request, res: Response) {
     const userId = req.userId;
     const { bankName, accountNumber, ifscCode } = req.body;
+
     if (!bankName || !accountNumber || !ifscCode) {
         return res.status(400).json({ msg: 'Missing required fields' });
     }
 
     try {
-        const isUserExists = await prisma.user.findUnique({ where: { userId } })
+        const isUserExists = await prisma.user.findUnique({ where: { userId:String(userId)} })
         if (!isUserExists) {
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -84,7 +85,7 @@ export async function submitWithdrawalDetails(req: Request, res: Response) {
                 userId: String(userId),
                 bankName: String(bankName),
                 accountNumber: Number(accountNumber),
-                ifscCode: Number(ifscCode)
+                ifscCode: String(ifscCode)
             },
         })
 

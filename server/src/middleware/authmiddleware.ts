@@ -5,19 +5,19 @@ import admin from '../firebase.admin';
 declare global {
     namespace Express {
         interface Request {
-            userId?: string;
+            userId?: string ;
         }
     }
 }
 
 
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
 
         if (!authHeader) {
-            return res.status(401).json({ msg: 'No token provided',code: "NTP" });
+            return res.status(401).json({ msg: 'No token provided', code: "NTP" });
         }
 
         const token = authHeader.split(' ')[1];
@@ -36,4 +36,36 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
-export default authMiddleware;
+
+
+export const authMiddlewareGql = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+
+            req.userId = undefined;
+            return next();
+        }
+
+        const token = authHeader.split(' ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(token);
+
+        if (!decodedToken) {
+
+            req.userId = undefined;
+            return next();
+        }
+
+        req.userId = decodedToken.uid;
+        next();
+    } catch (error) {
+        console.error('Error verifying Firebase token:', error);
+        req.userId = undefined;
+        next();
+    }
+};
+
+
+
+

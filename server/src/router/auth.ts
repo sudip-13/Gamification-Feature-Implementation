@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import {createUser,redemPointsToCash,submitWithdrawalDetails,Withdrawal} from '../auth/index'
-import authMiddleware from '../middleware/authmiddleware';
+import {authMiddleware} from '../middleware/authmiddleware';
 const router: Router = Router();
 
 router.post('/login',createUser)

@@ -1,7 +1,12 @@
+'use client'
+
 import { AnimatePresence, motion } from "framer-motion";
-import React from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
+
 import { Button } from "@mui/material";
+import { gql, useQuery } from "@apollo/client";
+import { RootState } from "@/lib/store";
+import { useSelector } from "react-redux";
 
 const popupVariants = {
     hidden: { scale: 0.5, opacity: 0 },
@@ -14,8 +19,41 @@ interface Props {
     openAddAccountPopup: () => void;
 }
 
+const withdrawalDetails = gql`
+{
 
-const Withdrawl: React.FC<Props> = ({ close,openAddAccountPopup }) => {
+ getWithdrawalDetails {
+    accountNumber
+    bankName
+
+  }
+}
+
+`
+
+interface withdrawalDetails {
+    accountNumber: number,
+    bankName: string,
+
+}
+
+
+const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
+
+    const [withdrawaldetails, setWitdrawalDetails] = useState<withdrawalDetails[]>([])
+    const token = useSelector((state: RootState) => state.authToken.token);
+
+    const { data, error, refetch } = useQuery(withdrawalDetails);
+
+    useEffect(() => {
+        if (data) {
+            setWitdrawalDetails(data.getWithdrawalDetails)
+        }
+        if (token) {
+            refetch()
+        }
+    }, [data, error, refetch, token]);
+
     return (
         <AnimatePresence>
             {/* Backdrop for blur effect and disabling interaction */}
@@ -52,15 +90,18 @@ const Withdrawl: React.FC<Props> = ({ close,openAddAccountPopup }) => {
                 <div className="border border-slate-800 my-4"></div>
                 <div>
                     <h2 className="text-rose-500">Saved accounts</h2>
-                    <div className="mt-5 flex flex-row gap-5 ">
-                        <Image height={60} width={60} src={"https://99designs-blog.imgix.net/blog/wp-content/uploads/2022/05/Mastercard_2019_logo.svg-e1659036851269.png?auto=format&q=60&fit=max&w=930"} alt={"Logo"} />
-                        <div className="text-white text-sm">
-                            <p className="text-lg">Mukesh Gupta</p>
-                            <p className="text-slate-500">85804805845</p>
+                    {withdrawaldetails.map((details, idx) => (
+                        <div className="mt-5 flex flex-row gap-5 " key={idx}>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#2854C5"><path d="M208-254v-319.33h66.67V-254H208Zm241.33 0v-319.33H516V-254h-66.67ZM80-120.67v-66.66h800v66.66H80ZM685.33-254v-319.33H752V-254h-66.67ZM80-640v-62l400-218.67L880-702v62H80Zm148.67-66.67h502.66-502.66Zm0 0h502.66L480-844.67l-251.33 138Z" /></svg>
+                            <div className="text-white text-sm">
+                                <p className="text-lg">{details.bankName}</p>
+                                <p className="text-slate-500">{details.accountNumber}</p>
+                            </div>
                         </div>
-                    </div>
+                    ))}
                     <div className="border border-slate-700 mt-4 px-5"></div>
                     <Button onClick={openAddAccountPopup} className="ml-32 mt-10" variant="contained">Add Account</Button>
+
                 </div>
             </motion.div>
         </AnimatePresence>

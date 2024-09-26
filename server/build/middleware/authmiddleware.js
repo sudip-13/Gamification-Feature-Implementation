@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authMiddlewareGql = exports.authMiddleware = void 0;
 const firebase_admin_1 = __importDefault(require("../firebase.admin"));
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -32,4 +33,27 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
         res.status(401).json({ msg: 'Unauthorized', code: "NTP" });
     }
 });
-exports.default = authMiddleware;
+exports.authMiddleware = authMiddleware;
+const authMiddlewareGql = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            req.userId = undefined;
+            return next();
+        }
+        const token = authHeader.split(' ')[1];
+        const decodedToken = yield firebase_admin_1.default.auth().verifyIdToken(token);
+        if (!decodedToken) {
+            req.userId = undefined;
+            return next();
+        }
+        req.userId = decodedToken.uid;
+        next();
+    }
+    catch (error) {
+        console.error('Error verifying Firebase token:', error);
+        req.userId = undefined;
+        next();
+    }
+});
+exports.authMiddlewareGql = authMiddlewareGql;

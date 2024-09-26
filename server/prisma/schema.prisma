@@ -44,7 +44,7 @@ model withdrawalDetails {
   userId        String
   bankName      String
   accountNumber Int
-  ifscCode      Int
+  ifscCode      String
 
   timestamp DateTime @default(now())
 

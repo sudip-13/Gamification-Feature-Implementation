@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 
 
+
 interface Props {
     popup: string;
     close: () => void;
@@ -33,10 +34,17 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
 
     const [amount, setAmount] = useState<number>(0);
     const [creditPoint, setCreditpoint] = useState<number>(0);
+    const [bankName, setBankName] = useState<string>("");
+    const [accountNumber, setAccountNumber] = useState<number>(0);
+    const [ifscCode, setIfscCode] = useState<string>("");
 
     const email = useSelector((state: RootState) => state.authToken.email);
     const userName = useSelector((state: RootState) => state.authToken.userName);
     const uId = useSelector((state: RootState) => state.authToken.userId);
+    const token = useSelector((state: RootState) => state.authToken.token);
+
+
+
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const newAmount = Number(e.target.value);
@@ -60,16 +68,14 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
 
         const result = await axios.post(
             `${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/payment/initialize-payment`,
-            {
-                amount: amount,
-            }
+            { amount: amount }
         );
 
         if (!result) {
             alert('Server error. Are you online?');
             return;
         }
-        console.log(result.data);
+
         const { amount: razorpayAmount, id: order_id, currency } = result.data.order;
 
         const options = {
@@ -78,7 +84,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
             currency: currency,
             name: userName,
             description: 'Test Transaction',
-            image: 'https://th.bing.com/th/id/OIP.g5AKW21APdv9ToQ-pwgo9AHaGK?rs=1&pid=ImgDetMain',
+            image: '/transaction.png',
             order_id: order_id,
             handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
                 const data = {
@@ -91,15 +97,27 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
                     data: response,
                 };
 
-                const verificationResult = await axios.post(
-                    `${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/payment/verify-payment`,
-                    data
-                );
-                console.log(verificationResult)
-
-             
+                try {
+                    const verificationResult = await axios.post(
+                        `${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/payment/verify-payment`,
+                        data
+                    );
 
 
+
+
+                    close();
+                    console.log(verificationResult.data.creditPoints)
+                    if (verificationResult.data?.creditPoints > 0) {
+
+                        alert(`You have received ${verificationResult.data.creditPoints} credit points.`)
+                    }
+
+                } catch (error) {
+                    console.error('Payment verification failed:', error);
+
+                    alert('Payment verification failed. Please try again.');
+                }
             },
             prefill: {
                 name: userName,
@@ -109,7 +127,6 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
             notes: {
                 userId: uId,
             },
-
             theme: {
                 color: '#61dafb',
             },
@@ -117,8 +134,44 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
-    }, [amount, creditPoint,uId,email,userName]);
+    }, [amount, creditPoint, uId, email, userName, close]);
 
+
+
+    const handleSaveAccount = useCallback(async () => {
+        try {
+            const result = await axios.post(
+                `${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/auth/submit-withdrawal-details`,
+                { bankName, accountNumber, ifscCode },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (result.status === 200) {
+                alert('Withdrawal details submitted successfully');
+                close();
+            }
+        } catch (error) {
+
+            if (axios.isAxiosError(error)) {
+                console.log(error)
+
+                if (error.status === 401) {
+                    alert('Unauthorized. Please log in first.');
+                }
+            }
+            else {
+
+                console.error('Request error:', error);
+                alert('Account save failed. Please try again.');
+            }
+
+            close();
+        }
+    }, [token, bankName, accountNumber, ifscCode, close]);
 
     return (
         <AnimatePresence>
@@ -162,16 +215,19 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
                             placeholder="Bank name"
                             className="bg-inherit px-5 py-2 text-white border border-teal-400 w-full rounded-md focus:outline-none focus:border-teal-200 focus:ring-2 focus:ring-teal-500 transition-all duration-300"
                             type="text"
+                            onChange={(e) => setBankName(e.target.value)}
                         />
                         <input
                             placeholder="Account no."
                             className="bg-inherit px-5 py-2 text-white border border-teal-400 w-full rounded-md focus:outline-none focus:border-teal-200 focus:ring-2 focus:ring-teal-500 transition-all duration-300"
                             type="text"
+                            onChange={(e) => setAccountNumber(Number(e.target.value))}
                         />
                         <input
                             placeholder="IFSC code"
                             className="bg-inherit px-5 py-2 text-white border border-teal-400 w-full rounded-md focus:outline-none focus:border-teal-200 focus:ring-2 focus:ring-teal-500 transition-all duration-300"
                             type="text"
+                            onChange={(e) => setIfscCode(e.target.value)}
                         />
 
                     </div>
@@ -182,6 +238,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
                             whileHover="hover"
                             whileTap="tap"
                             variants={buttonVariants}
+                            onClick={() => handleSaveAccount()}
                         >
                             Save account
                         </motion.button>
@@ -232,7 +289,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
                             whileHover="hover"
                             whileTap="tap"
                             variants={buttonVariants}
-                            onClick={ handleMakePayment}
+                            onClick={handleMakePayment}
                         >
                             Make payment
                         </motion.button>
@@ -240,6 +297,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
                     </div>
                 </motion.div>
             )}
+
 
         </AnimatePresence>
     );

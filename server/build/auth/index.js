@@ -78,7 +78,7 @@ function submitWithdrawalDetails(req, res) {
             return res.status(400).json({ msg: 'Missing required fields' });
         }
         try {
-            const isUserExists = yield index_1.prisma.user.findUnique({ where: { userId } });
+            const isUserExists = yield index_1.prisma.user.findUnique({ where: { userId: String(userId) } });
             if (!isUserExists) {
                 return res.status(404).json({ msg: 'User not found' });
             }
@@ -87,7 +87,7 @@ function submitWithdrawalDetails(req, res) {
                     userId: String(userId),
                     bankName: String(bankName),
                     accountNumber: Number(accountNumber),
-                    ifscCode: Number(ifscCode)
+                    ifscCode: String(ifscCode)
                 },
             });
             res.status(200).json({ msg: 'Withdrawal details submitted successfully' });

@@ -7,6 +7,7 @@ interface Props {
 }
 
 const AlertPopup: React.FC<Props> = ({ message, severity }) => {
+   
     return (
         <Alert className='fixed top-5 right-5 z-50' severity={severity ? "success" : "warning"}>
             {message}
