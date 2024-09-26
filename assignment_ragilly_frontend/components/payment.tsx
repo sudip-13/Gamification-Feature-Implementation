@@ -122,7 +122,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
             prefill: {
                 name: userName,
                 email: email,
-                contact: '9999999999',
+               
             },
             notes: {
                 userId: uId,
