@@ -5,7 +5,7 @@ import admin from '../firebase.admin';
 declare global {
     namespace Express {
         interface Request {
-            userId?: string ;
+            userId?: string;
         }
     }
 }

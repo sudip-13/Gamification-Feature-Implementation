@@ -44,6 +44,12 @@ export async function redemPointsToCash(req: Request, res: Response) {
     const { redemPoints } = req.body;
     try {
         const isUserExists = await prisma.user.findUnique({ where: { userId } })
+
+        if(!redemPoints){
+            return res.status(400).json({ msg: 'Please send valid amount of redem Points' });
+
+        }
+
         if (!isUserExists) {
             return res.status(404).json({ msg: 'User not found' });
         }

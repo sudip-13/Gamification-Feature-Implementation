@@ -93,8 +93,8 @@ const queries = {
                 accountNumber: withdrawalRequest.accountNumber,
                 transactionId: withdrawalRequest.transactionsId,
                 status: withdrawalRequest.status,
-                amount: withdrawalRequest.amount,
-                timestamp: withdrawalRequest.timestamp.toISOString(),
+                withdrawalAmount: withdrawalRequest.amount,
+                timeStamp: withdrawalRequest.timestamp.toISOString(),
             }));
         } catch (error) {
             console.error(error);

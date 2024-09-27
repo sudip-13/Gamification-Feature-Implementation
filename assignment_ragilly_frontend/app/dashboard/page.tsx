@@ -1,14 +1,15 @@
 "use client"
-
 import React, { useEffect, useState } from "react";
 import HorizontalLinearAlternativeLabelStepper from "@/components/steper";
 import Payment from "@/components/payment";
+import { useSelector } from 'react-redux';
 import Withdrawl from "@/components/withdrawl";
+import CardComponent from "@/components/card";
 import { gql, useQuery } from '@apollo/client';
-import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 
-const userDetails = gql`{
+
+const User_Details = gql`{
     Index {
         msg
     }
@@ -43,10 +44,13 @@ interface TransactionHistory {
     transactionId: string
 }
 const Dashboard: React.FC = () => {
+    const token = useSelector((state: RootState) => state.authToken.token);
+    const email = useSelector((state: RootState) => state.authToken.email);
+    const userId = useSelector((state: RootState) => state.authToken.userId);
+    const userName = useSelector((state: RootState) => state.authToken.userName);
     const [addBankAccount, setAddBankAccount] = useState<boolean>(false);
     const [withdrawlPopup, setWithdrawlPopup] = useState<boolean>(false);
-    const { error, data, refetch } = useQuery(userDetails);
-    const token = useSelector((state: RootState) => state.authToken.token);
+    const { loading, error, data, refetch } = useQuery(User_Details);
     const [userData, setUserData] = useState<userData[]>([])
     const [TransactionHistory, setTransactionHistory] = useState<TransactionHistory[]>([])
 
@@ -60,12 +64,12 @@ const Dashboard: React.FC = () => {
         closeWithdrawlPopup()
         setAddBankAccount(true);
     }
-    
+
     const formatDate = (isoString: string) => {
         const date = new Date(isoString);
         const day = date.getDate();
         const month = date.toLocaleString('default', { month: 'short' });
-    
+
 
         const suffix = (day: number) => {
             if (day >= 11 && day <= 13) return 'th';
@@ -80,10 +84,10 @@ const Dashboard: React.FC = () => {
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
-    
+
         return `${day}${suffix(day)} ${month} ${hours}:${minutes}:${seconds}`;
     };
-    
+
 
     useEffect(() => {
         if (error) {
@@ -100,9 +104,15 @@ const Dashboard: React.FC = () => {
         }
     }, [error, data, refetch, token]);
 
+    useEffect(() => {
+        console.log(token, email, userId, userName)
+    }, [email, token, userId, userName])
+
+
+
     return (
         <>
-            <div className="min-h-screen w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col ">
+            <div className="min-h-screen pb-10 w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] flex flex-col justify-center">
                 <nav className="py-4 px-6 md:px-[10rem] mt-5">
                     <ul className="flex flex-row items-center justify-between space-x-4 md:space-x-8">
                         <li className="flex flex-row space-x-1 items-center cursor-pointer">
@@ -128,7 +138,13 @@ const Dashboard: React.FC = () => {
                 <div className="px-4 md:px-12 mt-10">
                     <HorizontalLinearAlternativeLabelStepper />
                 </div>
-                <div className="px-4 py-4 overflow-y-auto md:px-12 mt-6 border ml-40 mr-40 h-[30rem] rounded-md border-slate-400 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-300 [&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-track]:rounded-full">
+                <div className="flex flex-row justify-evenly">
+                    <CardComponent points={100} money={10} />
+                    <CardComponent points={200} money={20} />
+                    <CardComponent points={500} money={50} />
+                    <CardComponent points={1000} money={100} />
+                </div>
+                <div className="px-4 md:ml-20 py-4 bg-gray-900 overflow-y-auto md:px-9 mt-6 border-gray-800 w-[90vw] h-[30rem] rounded-md [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-300 [&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-track]:rounded-full">
                     <div className="space-y-2">
                         {TransactionHistory.map((transaction, idx) => (
                             <section key={idx} className="text-white flex flex-row justify-between">

@@ -59,6 +59,7 @@ const Payment: React.FC<Props> = ({ close, popup }) => {
 
 
     const handleMakePayment = useCallback(async () => {
+        close();
         const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
 
         if (!res) {
