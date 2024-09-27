@@ -50,7 +50,7 @@ const Dashboard: React.FC = () => {
     const userName = useSelector((state: RootState) => state.authToken.userName);
     const [addBankAccount, setAddBankAccount] = useState<boolean>(false);
     const [withdrawlPopup, setWithdrawlPopup] = useState<boolean>(false);
-    const { loading, error, data, refetch } = useQuery(User_Details);
+    const {  error, data, refetch } = useQuery(User_Details);
     const [userData, setUserData] = useState<userData[]>([])
     const [TransactionHistory, setTransactionHistory] = useState<TransactionHistory[]>([])
 
