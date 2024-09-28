@@ -16,7 +16,7 @@ import AlertPopup from "@/components/alert";
 export default function Home() {
   const token = useSelector((state: RootState) => state.authToken.token);
   const email = useSelector((state: RootState) => state.authToken.email);
- 
+
   const uId = useSelector((state: RootState) => state.authToken.userId);
   const dispatch = useDispatch();
   const [signInWithGoogle] = useSignInWithGoogle(auth);
@@ -95,47 +95,51 @@ export default function Home() {
     <>
       <LampContainer>
         <div className="flex flex-col items-center justify-center">
-          <p className="text-white dark:text-neutral-200 text-xs sm:text-base">
+          <p className="text-white dark:text-neutral-200 text-xs sm:text-sm">
             The road to freedom starts from here
           </p>
-          <TypewriterEffectSmooth className="mb-10" words={words} />
-          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
-            <button 
-              disabled={disabled} 
-              onClick={() => setShowPaymentPopup(true)} // Show the payment popup
-              className="relative flex space-x-2 font-bold px-8 py-2 rounded-md bg-inherit isolation-auto z-10 border-2 border-teal-500 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded-full before:bg-teal-500 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700"
+          <TypewriterEffectSmooth className="mb-5 sm:mb-10" words={words} />
+
+          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+            <button
+              disabled={disabled}
+              onClick={() => setShowPaymentPopup(true)}
+              className="relative flex space-x-2 font-bold px-4 py-2 sm:px-8 sm:py-2 rounded-md bg-inherit z-10 border-2 border-teal-500 overflow-hidden transition-all duration-700 hover:bg-teal-500"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                 <path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z" />
               </svg>
-              <span className="group-hover/modal-btn:translate-x-40 text-white text-center transition duration-500">
-                Make a payment
-              </span>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+              <span className="text-white text-center">Make a payment</span>
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                 <path d="m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z" />
               </svg>
             </button>
-            <Link href={"/dashboard"}>
-              <button disabled={disabled} className="relative flex space-x-3 font-bold px-8 py-2 rounded-md bg-inherit isolation-auto z-10 border-2 border-rose-500 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded-full before:bg-rose-500 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+
+            <Link href="/dashboard">
+              <button
+                disabled={disabled}
+                className="relative flex space-x-3 font-bold px-4 py-2 sm:px-8 sm:py-2 rounded-md bg-inherit z-10 border-2 border-rose-500 transition-all duration-700 hover:bg-rose-500"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                   <path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z" />
                 </svg>
                 <span className="text-white">Dashboard</span>
-                <svg className="hover:-rotate-45 ease-in-out duration-300 transition-all" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+                <svg className="hover:-rotate-45 ease-in-out duration-300 transition-all" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                   <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z" />
                 </svg>
               </button>
             </Link>
+
             {isLoggedIn ? (
-              <button onClick={handleLogout} className="relative flex space-x-3 font-bold px-8 py-2 rounded-md bg-inherit isolation-auto z-10 border-2 border-lime-500 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded-full before:bg-lime-500 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+              <button onClick={handleLogout} className="relative flex space-x-3 font-bold px-4 py-2 sm:px-8 sm:py-2 rounded-md bg-inherit z-10 border-2 border-lime-500 transition-all duration-700 hover:bg-lime-500">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                   <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
                 </svg>
                 <span className="text-white">Logout</span>
               </button>
             ) : (
-              <button onClick={() => handleGoogleLogin()} className="relative flex space-x-3 font-bold px-8 py-2 rounded-md bg-inherit isolation-auto z-10 border-2 border-lime-500 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-right-full before:hover:right-0 before:rounded-full before:bg-lime-500 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed">
+              <button onClick={handleGoogleLogin} className="relative flex space-x-3 font-bold px-4 py-2 sm:px-8 sm:py-2 rounded-md bg-inherit z-10 border-2 border-lime-500 transition-all duration-700 hover:bg-lime-500">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
                   <path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
                 </svg>
                 <span className="text-white">Login</span>
@@ -143,7 +147,7 @@ export default function Home() {
             )}
           </div>
         </div>
-      </LampContainer >
+      </LampContainer>
       {showPaymentPopup && <Payment popup={"kalua"} close={closePaymentPopup} />}
       {showAlert && <AlertPopup message={alertMsg} severity={severity} />}
     </>

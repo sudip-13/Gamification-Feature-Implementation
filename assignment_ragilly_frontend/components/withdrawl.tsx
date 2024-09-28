@@ -105,11 +105,11 @@ const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
                 if (error.response?.status === 400 || error.response?.status === 404) {
                     alert(`${error.response.data.msg}`);
                     close();
-                } 
-                else if(error.response?.status ===401){
+                }
+                else if (error.response?.status === 401) {
                     alert('Unauthorized. Please log in first.');
                 }
-                
+
                 else {
                     console.error("Error:", error);
                     alert("An unexpected error occurred. Please try again.");
@@ -164,7 +164,7 @@ const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
                 onClick={close}
             />
             <motion.div
-                className="fixed top-20 left-0 right-0 mx-auto [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] max-w-lg w-[30vw] h-[60vh] p-6 rounded-lg shadow-lg z-50"
+                className="fixed  top-20 left-0 right-0 mx-auto [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)] max-w-lg w-[80vw] md:w-[30vw] h-[60vh] p-6 rounded-lg shadow-lg z-50"
                 initial="hidden"
                 animate="visible"
                 exit="exit"
@@ -172,8 +172,10 @@ const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
                 transition={{ type: "spring", stiffness: 100, damping: 20 }}
             >
                 <div className="flex flex-row justify-between items-center">
-                    <button className="text-blue-500 font-bold text-lg" onClick={() => setShowWithdrawalRequest(false)}>Withdraw your cash</button>
-                    <button className="text-blue-500 font-bold text-lg cursor-pointer" onClick={() => setShowWithdrawalRequest(true)}>Withdrawal Requests</button>
+                    <div className="flex flex-row gap-10 px-10">
+                        <button className="text-blue-500 font-bold text-lg" onClick={() => setShowWithdrawalRequest(false)}>Cash</button>
+                        <button className="text-blue-500 font-bold text-lg cursor-pointer" onClick={() => setShowWithdrawalRequest(true)}>Requests</button>
+                    </div>
                     <motion.svg
                         xmlns="http://www.w3.org/2000/svg"
                         height="24px"
@@ -190,26 +192,24 @@ const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
                 <div className="border border-slate-800 my-4"></div>
                 {showWithdrawalRequest ? (
                     <div >
-
                         <h2 className="text-rose-500">Withdrawal Request</h2>
                         {withdrawalhistory.map((history, idx) => (
                             <div key={idx}>
                                 <div className="mt-5 flex flex-row gap-16  " >
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#78A75A"><path d="M480-250q63.67-15.67 105.17-73.17t41.5-127.02v-93.3L480-616.67l-146.67 73.18v93.3q0 69.52 41.71 127.03Q416.75-265.64 480-250ZM160-120v-480l320-240 320 240v480H160Zm66.67-66.67h506.66v-382.66L480-755.33l-253.33 186v382.66ZM480-471.33Z" /></svg>
-                                    <div className="text-white text-sm ">
-                                        <p className="text-lg">{history.withdrawalAmount}</p>
-                                        <p className="text-slate-500">{history.status}</p>
+                                    <div className="text-white text-sm flex flex-row justify-between w-full items-center">
+                                        <p className="text-sm flex justify-center flex-row items-center space-x-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#78A75A"><path d="M480-250q63.67-15.67 105.17-73.17t41.5-127.02v-93.3L480-616.67l-146.67 73.18v93.3q0 69.52 41.71 127.03Q416.75-265.64 480-250ZM160-120v-480l320-240 320 240v480H160Zm66.67-66.67h506.66v-382.66L480-755.33l-253.33 186v382.66ZM480-471.33Z" /></svg>
+                                            <span>
+                                                {history.withdrawalAmount}
+                                            </span>
+                                        </p>
+                                        <p className=" text-sm text-blue-500">{history.status}</p>
+                                        <p>{formatDate(history.timeStamp)}</p>
                                     </div>
-                                    <div className="text-white text-sm">{formatDate(history.timeStamp)}</div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#0000F5" >
-                                        <path d="M480-360 280-559.33h400L480-360Z"  />
-                                    </svg>
                                 </div>
                                 <div className="border border-slate-700 my-6 px-5"></div>
-                              
                             </div>
                         ))}
-
                     </div>
                 ) : (
                     <div>

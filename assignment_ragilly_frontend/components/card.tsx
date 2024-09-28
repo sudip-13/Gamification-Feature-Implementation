@@ -18,7 +18,6 @@ const CardComponent: React.FC<Props> = ({ points, money }) => {
 
     const token = useSelector((state: RootState) => state.authToken.token);
 
-
     const handleRedeemPoints = useCallback(async (points: number) => {
 
 
