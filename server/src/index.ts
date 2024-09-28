@@ -12,10 +12,10 @@ import { ApolloServer } from '@apollo/server';
 import { typeDefs, resolvers } from './graphql';
 
 dotenv.config({ path: "./.env" });
-import './cronJobs';
 
 export const prisma = new PrismaClient();
 
+import './cronJobs';
 const app = express();
 const PORT: string | undefined = process.env.PORT;
 
