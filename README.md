@@ -10,6 +10,7 @@ This project implements a points system where users earn points (coins) for each
 2. Navigate to the project directory via the terminal:
     ```bash
     cd server
+    yarn install
     yarn dev
     ```
 
@@ -17,6 +18,7 @@ This project implements a points system where users earn points (coins) for each
 3. In a new terminal, navigate to the frontend directory:
     ```bash
     cd assignment_ragilly_frontend
+    yarn
     yarn dev
     ```
 
@@ -59,6 +61,7 @@ You can also access the live demo of the project at: [https://gamification-featu
     - Card Number: `4111 1111 1111 1111`
     - CVV: Any three digits
     - Expiry: Any future date(`MM/YY` format)
+    - OTP: 1111
 
 
 - ## **Dashboard:**
