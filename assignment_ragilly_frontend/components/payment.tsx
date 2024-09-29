@@ -26,7 +26,7 @@ const buttonVariants = {
     tap: { scale: 0.95 }
 };
 
-const Payment: React.FC<Props> = ({ close, popup }) => {
+const Payment: React.FC<Props> = ({ close, popup, }) => {
     const [amount, setAmount] = useState<number>(0);
     const [creditPoint, setCreditpoint] = useState<number>(0);
     const [bankName, setBankName] = useState<string>("");

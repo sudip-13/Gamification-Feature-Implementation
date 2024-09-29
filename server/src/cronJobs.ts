@@ -59,7 +59,7 @@ const checkAndUpdateWithdrawalRequests = async () => {
 };
 
 
-cron.schedule('0 * * * *', checkAndUpdateWithdrawalRequests);
+cron.schedule('*/15 * * * *', checkAndUpdateWithdrawalRequests);
 
 
 checkAndUpdateWithdrawalRequests();
