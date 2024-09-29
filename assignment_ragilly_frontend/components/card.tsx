@@ -9,13 +9,14 @@ interface Props {
     points: number;
     money: number;
     currentTransaction: number;
+    fetch: () => void;
 }
 
 
 
 
 
-const CardComponent: React.FC<Props> = ({ points, money, currentTransaction }) => {
+const CardComponent: React.FC<Props> = ({ points, money, currentTransaction, fetch }) => {
 
     const token = useSelector((state: RootState) => state.authToken.token);
 
@@ -35,10 +36,7 @@ const CardComponent: React.FC<Props> = ({ points, money, currentTransaction }) =
                 )
                 close();
                 alert(`${response.data.msg}`);
-            }
-
-
-            catch (error) {
+            } catch (error) {
 
                 if (axios.isAxiosError(error)) {
                     console.log(error);
@@ -57,10 +55,11 @@ const CardComponent: React.FC<Props> = ({ points, money, currentTransaction }) =
                     }
                 }
             }
+            fetch();
         } else {
             alert("You can only redeem points every 5th transaction.")
         }
-    }, [currentTransaction, token])
+    }, [currentTransaction, fetch, token])
 
 
     return (

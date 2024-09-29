@@ -18,6 +18,7 @@ const popupVariants = {
 
 interface Props {
     close: () => void;
+    fetch: () => void;
     openAddAccountPopup: () => void;
 }
 
@@ -52,7 +53,7 @@ interface WithdrawalHistorys {
     withdrawalAmount: number;
 }
 
-const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
+const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup,fetch }) => {
     const [withdrawaldetails, setWitdrawalDetails] = useState<WithdrawalDetail[]>([]);
     const [withdrawalhistory, setWithdrawalhistory] = useState<WithdrawalHistorys[]>([]);
     const [checkedAccountIndex, setCheckedAccountIndex] = useState<number | null>(null);
@@ -126,7 +127,10 @@ const Withdrawl: React.FC<Props> = ({ close, openAddAccountPopup }) => {
                 }
             }
         }
-    }, [depositAmount, token, getCheckedAccountNumbers, close]);
+        finally{
+            fetch();
+        }
+    }, [getCheckedAccountNumbers, depositAmount, token, close, fetch]);
 
 
     const formatDate = (isoString: string) => {

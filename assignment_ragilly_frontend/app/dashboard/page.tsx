@@ -68,6 +68,9 @@ const Dashboard: React.FC = () => {
         closeWithdrawlPopup()
         setAddBankAccount(true);
     }
+    const fetchData = () => {
+        refetch();
+    }
 
     const formatDate = (isoString: string) => {
         const date = new Date(isoString);
@@ -209,10 +212,10 @@ const Dashboard: React.FC = () => {
                         <HorizontalLinearAlternativeLabelStepper noOfTransactions={noOfTransaction} />
                     </div>
                     <div className="flex flex-col gap-5 md:flex-row justify-evenly">
-                        <CardComponent currentTransaction={noOfTransaction} points={100} money={10} />
-                        <CardComponent currentTransaction={noOfTransaction} points={200} money={20} />
-                        <CardComponent currentTransaction={noOfTransaction} points={500} money={50} />
-                        <CardComponent currentTransaction={noOfTransaction} points={1000} money={100} />
+                        <CardComponent currentTransaction={noOfTransaction} fetch ={fetchData} points={100} money={10} />
+                        <CardComponent currentTransaction={noOfTransaction} fetch ={fetchData} points={200} money={20} />
+                        <CardComponent currentTransaction={noOfTransaction} fetch ={fetchData} points={500} money={50} />
+                        <CardComponent currentTransaction={noOfTransaction} fetch ={fetchData} points={1000} money={100} />
                     </div>
                     <div className="px-4 py-4 bg-gray-900 overflow-y-auto md:px-5 mt-6 border-gray-800 w-[90vw] h-[30rem] rounded-md [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-300 [&::-webkit-scrollbar-thumb]:bg-gray-500 [&::-webkit-scrollbar-track]:rounded-full">
                         <div className="space-y-2">
@@ -251,7 +254,7 @@ const Dashboard: React.FC = () => {
                 </div>
             )}
             {addBankAccount && <Payment popup={"withdrawl"} close={handleClose} />}
-            {withdrawlPopup && <Withdrawl close={closeWithdrawlPopup} openAddAccountPopup={handleAddBankAccount} />}
+            {withdrawlPopup && <Withdrawl fetch={fetchData} close={closeWithdrawlPopup} openAddAccountPopup={handleAddBankAccount} />}
         </>
     );
 };
