@@ -8,55 +8,59 @@ import { useSelector } from "react-redux";
 interface Props {
     points: number;
     money: number;
+    currentTransaction: number;
 }
 
 
 
 
 
-const CardComponent: React.FC<Props> = ({ points, money }) => {
+const CardComponent: React.FC<Props> = ({ points, money, currentTransaction }) => {
 
     const token = useSelector((state: RootState) => state.authToken.token);
 
     const handleRedeemPoints = useCallback(async (points: number) => {
 
-
-        try {
-            const response = await axios.patch(`${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/auth/redeem-points-to-cash`,
-                {
-                    redemPoints: points
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
+        if (currentTransaction == 4) {
+            try {
+                const response = await axios.patch(`${process.env.NEXT_PUBLIC_SERVER_DOMAIN}/api/auth/redeem-points-to-cash`,
+                    {
+                        redemPoints: points
                     },
-                }
-            )
-            close();
-            alert(`${response.data.msg}`);
-        }
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                close();
+                alert(`${response.data.msg}`);
+            }
 
 
-        catch (error) {
+            catch (error) {
 
-            if (axios.isAxiosError(error)) {
-                console.log(error);
-                if (error.response?.status === 400 || error.response?.status === 404) {
-                    alert(`${error.response.data.msg}`);
-                    close();
-                }
-                else if (error.response?.status === 401) {
-                    alert('Unauthorized. Please log in first.');
-                }
+                if (axios.isAxiosError(error)) {
+                    console.log(error);
+                    if (error.response?.status === 400 || error.response?.status === 404) {
+                        alert(`${error.response.data.msg}`);
+                        close();
+                    }
+                    else if (error.response?.status === 401) {
+                        alert('Unauthorized. Please log in first.');
+                    }
 
-                else {
-                    console.error("Error:", error);
-                    alert("An unexpected error occurred. Please try again.");
-                    close();
+                    else {
+                        console.error("Error:", error);
+                        alert("An unexpected error occurred. Please try again.");
+                        close();
+                    }
                 }
             }
+        } else {
+            alert("You can only redeem points every 5th transaction.")
         }
-    }, [token])
+    }, [currentTransaction, token])
 
 
     return (
