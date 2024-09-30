@@ -57,7 +57,7 @@ const queries = {
         }
 
         try {
-            const transactionHistory = await prisma.history.findMany({ where: { userId: userId } });
+            const transactionHistory = await prisma.history.findMany({ where: { userId: userId },orderBy: { timestamp: 'desc' } });
             if (transactionHistory.length === 0) {
                 return [];
             }
@@ -84,7 +84,7 @@ const queries = {
         }
 
         try {
-            const withdrawalRequests = await prisma.withdrawalRequests.findMany({ where: { userId: userId } });
+            const withdrawalRequests = await prisma.withdrawalRequests.findMany({ where: { userId: userId },orderBy: { timestamp: 'desc' } });
             if (withdrawalRequests.length === 0) {
                 return [];
             }
